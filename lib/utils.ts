@@ -12,18 +12,18 @@ export function cn(...inputs: ClassValue[]) {
 
 // ERROR HANDLER
 export const handleError = (error: unknown) => {
+  console.error("Full error object:", error); // Log full error for debugging
+
   if (error instanceof Error) {
-    // This is a native JavaScript error (e.g., TypeError, RangeError)
-    console.error(error.message);
-    throw new Error(`Error: ${error.message}`);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack); // Log stack trace
+    return new Error(`Error: ${error.message}`);
   } else if (typeof error === "string") {
-    // This is a string error message
-    console.error(error);
-    throw new Error(`Error: ${error}`);
+    console.error("String error:", error);
+    return new Error(`Error: ${error}`);
   } else {
-    // This is an unknown type of error
-    console.error(error);
-    throw new Error(`Unknown error: ${JSON.stringify(error)}`);
+    console.error("Unknown error type:", JSON.stringify(error)); // Log unknown error
+    return new Error(`Unknown error: ${JSON.stringify(error)}`);
   }
 };
 
@@ -50,7 +50,6 @@ const toBase64 = (str: string) =>
 export const dataUrl = `data:image/svg+xml;base64,${toBase64(
   shimmer(1000, 1000)
 )}`;
-// ==== End
 
 // FORM URL QUERY
 export const formUrlQuery = ({
@@ -76,7 +75,6 @@ export function removeKeysFromQuery({
     delete currentUrl[key];
   });
 
-  // Remove null or undefined values
   Object.keys(currentUrl).forEach(
     (key) => currentUrl[key] == null && delete currentUrl[key]
   );
@@ -84,7 +82,7 @@ export function removeKeysFromQuery({
   return `${window.location.pathname}?${qs.stringify(currentUrl)}`;
 }
 
-// DEBOUNCE
+// DEBOUNCE FUNCTION
 export const debounce = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: NodeJS.Timeout | null;
   return (...args: any[]) => {
@@ -93,7 +91,7 @@ export const debounce = (func: (...args: any[]) => void, delay: number) => {
   };
 };
 
-// GE IMAGE SIZE
+// GET IMAGE SIZE
 export type AspectRatioKey = keyof typeof aspectRatioOptions;
 export const getImageSize = (
   type: string,
@@ -102,8 +100,7 @@ export const getImageSize = (
 ): number => {
   if (type === "fill") {
     return (
-      aspectRatioOptions[image.aspectRatio as AspectRatioKey]?.[dimension] ||
-      1000
+      aspectRatioOptions[image.aspectRatio as AspectRatioKey]?.[dimension] || 1000
     );
   }
   return image?.[dimension] || 1000;
@@ -121,7 +118,6 @@ export const download = (url: string, filename: string) => {
       const blobURL = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobURL;
-
       if (filename && filename.length)
         a.download = `${filename.replace(" ", "_")}.png`;
       document.body.appendChild(a);
@@ -132,7 +128,7 @@ export const download = (url: string, filename: string) => {
 
 // DEEP MERGE OBJECTS
 export const deepMergeObjects = (obj1: any, obj2: any) => {
-  if(obj2 === null || obj2 === undefined) {
+  if (obj2 === null || obj2 === undefined) {
     return obj1;
   }
 

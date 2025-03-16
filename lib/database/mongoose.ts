@@ -23,9 +23,8 @@ export const connectToDatabase = async () => {
   cached.promise = 
     cached.promise || 
     mongoose.connect(MONGODB_URL, { 
-      dbName: 'CreditWise Image Editor', bufferCommands: false 
+      dbName: 'CreditWise_Image_Editor', bufferCommands: false 
     })
-
   cached.conn = await cached.promise;
 
   return cached.conn;
