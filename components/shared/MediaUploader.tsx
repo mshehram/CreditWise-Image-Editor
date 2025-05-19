@@ -52,7 +52,7 @@ const MediaUploader = ({
 
   return (
     <CldUploadWidget
-      uploadPreset="Creditwise Image Editor"
+      uploadPreset="shehraam"
       options={{
         multiple: false,
         resourceType: "image",

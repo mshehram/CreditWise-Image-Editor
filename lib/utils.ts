@@ -126,6 +126,8 @@ export const download = (url: string, filename: string) => {
     .catch((error) => console.log({ error }));
 };
 
+
+
 // DEEP MERGE OBJECTS
 export const deepMergeObjects = (obj1: any, obj2: any) => {
   if (obj2 === null || obj2 === undefined) {
@@ -151,3 +153,27 @@ export const deepMergeObjects = (obj1: any, obj2: any) => {
 
   return output;
 };
+
+
+
+// lib/utils.ts (or create lib/image.utils.ts if you want)
+
+export const convertImageFormat = async (imageUrl: string, targetFormat: string) => {
+  const res = await fetch('https://api.nutrient.io/image/convert', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.NEXT_PUBLIC_NUTRIENT_API_KEY || '', // Use .env value
+    },
+    body: JSON.stringify({
+      image_url: imageUrl,
+      output_format: targetFormat,
+    }),
+  });
+
+  if (!res.ok) throw new Error('Failed to convert image');
+
+  const result = await res.json();
+  return result.converted_image_url;
+};
+
