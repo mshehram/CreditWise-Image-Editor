@@ -381,13 +381,15 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
           >
             {isTransforming ? 'Transforming...' : 'Apply Transformation'}
           </Button>
-          <Button
-            type="submit"
-            className="submit-button capitalize"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Share With Community'}
-          </Button>
+          {!isTransforming && transformationConfig && (
+            <Button
+              type="submit"
+              className="submit-button capitalize"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Share With Community'}
+            </Button>
+          )}
         </div>
       </form>
     </Form>
