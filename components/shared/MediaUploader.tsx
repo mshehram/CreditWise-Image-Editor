@@ -31,26 +31,32 @@ const MediaUploader = ({
 }: MediaUploaderProps) => {
   const { toast } = useToast();
 
-  const onUploadSuccessHandler = useCallback((result: any) => {
-    const info = result?.info;
-    if (!info) return;
+  const onUploadSuccessHandler = useCallback(
+    (result: any) => {
+      const info = result?.info;
+      if (!info) return;
 
-    setImage({
-      publicId: info.public_id,
-      width: info.width,
-      height: info.height,
-      secureURL: info.secure_url,
-    });
+      setImage({
+        publicId: info.public_id,
+        width: info.width,
+        height: info.height,
+        secureURL: info.secure_url,
+      });
 
-    onValueChange(info.public_id);
+      onValueChange(info.public_id);
 
-    toast({
-      title: "Image uploaded successfully",
-      description: "1 credit was deducted from your account",
-      duration: 5000,
-      className: "success-toast",
-    });
-  }, [onValueChange, setImage, toast]);
+      // Show toast only if type is NOT restore or imageconverter
+      if (!["restore", "imageconverter"].includes(type)) {
+        toast({
+          title: "Image uploaded successfully",
+          description: "1 credit was deducted from your account",
+          duration: 5000,
+          className: "success-toast",
+        });
+      }
+    },
+    [onValueChange, setImage, toast, type]
+  );
 
   const onUploadErrorHandler = useCallback(() => {
     toast({
