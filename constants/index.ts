@@ -173,14 +173,14 @@ export const transformationTypes = {
   imageconverter: {
     type: "imageconverter",
     title: "Snap 2 PNG",
-    subTitle: "Aby abi Chatgpt krna hy",
+    subTitle: "One Click to Clean PNGs",
     config: { fillBackground: true },
     icon: "stars.svg",
   },
    transformingdimensions: {
     type: "transformingdimensions",
     title: "Transforming Dimensions",
-    subTitle: "Aby abi Chatgpt krna hyy",
+    subTitle: "Give Depth to Your Designs",
     config: { fillBackground: true },
     icon: "stars.svg",
   },

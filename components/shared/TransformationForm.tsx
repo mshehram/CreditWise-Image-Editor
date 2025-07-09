@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import {
   Select,
   SelectContent,
@@ -11,16 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
 import { Button } from "@/components/ui/button"
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { aspectRatioOptions, creditFee, defaultValues, transformationTypes } from "@/constants"
@@ -34,6 +27,7 @@ import { getCldImageUrl } from "next-cloudinary"
 import { addImage, updateImage } from "@/lib/actions/image.actions"
 import { useRouter } from "next/navigation"
 import { InsufficientCreditsModal } from "./InsufficientCreditsModal"
+import { toast } from "sonner"
 
 export const formSchema = z.object({
   title: z.string(),
@@ -45,18 +39,53 @@ export const formSchema = z.object({
   conversion: z.string().optional(),
 })
 
-const TransformationForm = ({ action, data = null, userId, type, creditBalance, config = null }: TransformationFormProps) => {
-  const transformationType = transformationTypes[type];
+const VideoPopup = ({ videoUrl, onClose }: { videoUrl: string; onClose: () => void }) => {
+  const [isVisible, setIsVisible] = useState(true)
+
+  if (!isVisible) return null
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center">
+      <div className="bg-white rounded-lg p-4 w-[800px] max-w-full relative">
+        <button
+          className="absolute top-2 right-2 text-gray-600 hover:text-black text-sm"
+          onClick={() => {
+            setIsVisible(false)
+            onClose()
+          }}
+        >
+          Skip
+        </button>
+        <video controls autoPlay className="w-full h-[450px] rounded">
+          <source src={videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  )
+}
+
+const TransformationForm = ({
+  action,
+  data = null,
+  userId,
+  type,
+  creditBalance,
+  config = null,
+}: TransformationFormProps) => {
+  const transformationType = transformationTypes[type]
   const [image, setImage] = useState(data)
-  const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isTransforming, setIsTransforming] = useState(false);
+  const [newTransformation, setNewTransformation] = useState<Transformations | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isTransforming, setIsTransforming] = useState(false)
   const [transformationConfig, setTransformationConfig] = useState(config)
   const [isPending, startTransition] = useTransition()
   const [convertedUrl, setConvertedUrl] = useState<string>("")
   const [isConverting, setIsConverting] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
   const router = useRouter()
 
+<<<<<<< HEAD
   // Free features where credits should not be deducted
   const freeFeatures = ["restore", "imageconverter"]
 
@@ -69,21 +98,62 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
     format: data?.format,
     conversion: data?.conversion,
   } : defaultValues
+=======
+  const initialValues = data && action === "Update"
+    ? {
+        title: data?.title,
+        aspectRatio: data?.aspectRatio,
+        color: data?.color,
+        prompt: data?.prompt,
+        publicId: data?.publicId,
+        format: data?.format,
+        conversion: data?.conversion,
+      }
+    : defaultValues
+>>>>>>> a6a7fc3 (commit)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues,
   })
 
+<<<<<<< HEAD
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
+=======
+  const videoUrls: Record<string, string> = {
+    fill: "/assets/videos/Generative-fill.mp4",
+    restore: "/assets/videos/restore-image.mp4",
+    removeBackground: "/assets/videos/background-remove.mp4",
+    remove: "/assets/videos/object-remove.mp4",
+    recolor: "/assets/videos/object-recolor.mp4",
+    imageconverter: "/assets/videos/snap-2-png.mp4",
+  }
+
+  useEffect(() => {
+    const typesWithVideos = [
+      "fill",
+      "restore",
+      "removeBackground",
+      "remove",
+      "recolor",
+      "imageconverter",
+    ]
+    if (typesWithVideos.includes(type)) {
+      setShowVideo(true)
+    }
+  }, [type])
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true)
+>>>>>>> a6a7fc3 (commit)
 
     if (data || image) {
       const transformationUrl = getCldImageUrl({
         width: image?.width,
         height: image?.height,
         src: image?.publicId,
-        ...transformationConfig
+        ...transformationConfig,
       })
 
       const imageData = {
@@ -101,11 +171,15 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
       }
 
       try {
+<<<<<<< HEAD
         if (action === 'Add') {
+=======
+        if (action === "Add") {
+>>>>>>> a6a7fc3 (commit)
           const newImage = await addImage({
             image: imageData,
             userId,
-            path: '/'
+            path: "/",
           })
 
           if (newImage) {
@@ -115,11 +189,20 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
           }
         }
 
+<<<<<<< HEAD
         if (action === 'Update') {
           const updatedImage = await updateImage({
             image: { ...imageData, _id: data._id },
+=======
+        if (action === "Update") {
+          const updatedImage = await updateImage({
+            image: {
+              ...imageData,
+              _id: data._id,
+            },
+>>>>>>> a6a7fc3 (commit)
             userId,
-            path: `/transformations/${data._id}`
+            path: `/transformations/${data._id}`,
           })
 
           if (updatedImage) {
@@ -127,47 +210,74 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
           }
         }
       } catch (error) {
+<<<<<<< HEAD
         console.log(error);
+=======
+        console.log(error)
+>>>>>>> a6a7fc3 (commit)
       }
     }
 
     setIsSubmitting(false)
   }
 
+<<<<<<< HEAD
   const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey];
+=======
+  const onSelectFieldHandler = (
+    value: string,
+    onChangeField: (value: string) => void
+  ) => {
+    const imageSize = aspectRatioOptions[value as AspectRatioKey]
+>>>>>>> a6a7fc3 (commit)
     if (imageSize) {
       setImage((prevState: any) => ({
         ...prevState,
         aspectRatio: imageSize.aspectRatio,
         width: imageSize.width,
         height: imageSize.height,
-      }));
+      }))
     }
-    setNewTransformation(transformationType.config);
-    return onChangeField(value);
-  };
 
-  const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {
+    setNewTransformation(transformationType.config)
+    return onChangeField(value)
+  }
+
+  const onInputChangeHandler = (
+    fieldName: string,
+    value: string,
+    type: string,
+    onChangeField: (value: string) => void
+  ) => {
     debounce(() => {
       setNewTransformation((prevState: any) => ({
         ...prevState,
         [type]: {
           ...prevState?.[type],
-          [fieldName === 'prompt' ? 'prompt' : 'to']: value
-        }
+          [fieldName === "prompt" ? "prompt" : "to"]: value,
+        },
       }))
-    }, 1000)();
-
+    }, 1000)()
     return onChangeField(value)
   }
 
+<<<<<<< HEAD
   const handleFormatChange = async (value: string, onChangeField: (value: string) => void) => {
     if (type === 'imageconverter') {
       setNewTransformation(transformationType.config);
+=======
+  const handleFormatChange = async (
+    value: string,
+    onChangeField: (value: string) => void
+  ) => {
+    if (type === "imageconverter") {
+      setNewTransformation(transformationType.config)
+>>>>>>> a6a7fc3 (commit)
     }
-    onSelectFieldHandler('png', onChangeField);
-    setConvertedUrl("");
+
+    onSelectFieldHandler("png", onChangeField)
+    setConvertedUrl("")
   }
 
   const onTransformHandler = async () => {
@@ -180,23 +290,30 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
     setNewTransformation(null)
 
     startTransition(async () => {
+<<<<<<< HEAD
       if (!freeFeatures.includes(type)) {
         await updateCredits(userId, creditFee)
+=======
+      if (type !== "restore" && type !== "imageconverter") {
+        await updateCredits(userId, creditFee)
+        toast.success("Image uploaded successfully\n1 credit was deducted from your account")
+>>>>>>> a6a7fc3 (commit)
       }
     })
   }
 
   useEffect(() => {
-    if (image && (type === 'restore' || type === 'removeBackground')) {
+    if (image && (type === "restore" || type === "removeBackground")) {
       setNewTransformation(transformationType.config)
     }
   }, [image, transformationType.config, type])
 
   useEffect(() => {
-    if (type === 'imageconverter') {
-      form.setValue('format', 'png');
-      setNewTransformation(transformationType.config);
+    if (type === "imageconverter") {
+      form.setValue("format", "png")
+      setNewTransformation(transformationType.config)
     }
+<<<<<<< HEAD
     // eslint-disable-next-line
   }, [image, type, transformationType.config]);
 
@@ -214,33 +331,31 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
           className="w-full"
           render={({ field }) => <Input {...field} className="input-field" />}
         />
+=======
+  }, [image, type, transformationType.config, form])
 
-        {type === 'fill' && (
+  return (
+    <>
+      {showVideo && videoUrls[type] && (
+        <VideoPopup videoUrl={videoUrls[type]} onClose={() => setShowVideo(false)} />
+      )}
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {creditBalance < Math.abs(creditFee) &&
+            type !== "restore" &&
+            type !== "imageconverter" && <InsufficientCreditsModal />}
+>>>>>>> a6a7fc3 (commit)
+
           <CustomField
             control={form.control}
-            name="aspectRatio"
-            formLabel="Aspect Ratio"
+            name="title"
+            formLabel="Image Title"
             className="w-full"
-            render={({ field }) => (
-              <Select
-                onValueChange={(value) => onSelectFieldHandler(value, field.onChange)}
-                value={field.value}
-              >
-                <SelectTrigger className="select-field">
-                  <SelectValue placeholder="Select size" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(aspectRatioOptions).map((key) => (
-                    <SelectItem key={key} value={key} className="select-item">
-                      {aspectRatioOptions[key as AspectRatioKey].label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            render={({ field }) => <Input {...field} className="input-field" />}
           />
-        )}
 
+<<<<<<< HEAD
         {type === 'imageconverter' && (
           <>
             <input type="hidden" {...form.register("format")} value="png" />
@@ -284,10 +399,21 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
               control={form.control}
               name="prompt"
               formLabel={type === 'remove' ? 'Object to remove' : 'Object to recolor'}
+=======
+          {type === "fill" && (
+            <CustomField
+              control={form.control}
+              name="aspectRatio"
+              formLabel="Aspect Ratio"
+>>>>>>> a6a7fc3 (commit)
               className="w-full"
               render={({ field }) => (
-                <Input
+                <Select
+                  onValueChange={(value) =>
+                    onSelectFieldHandler(value, field.onChange)
+                  }
                   value={field.value}
+<<<<<<< HEAD
                   className="input-field"
                   onChange={(e) =>
                     onInputChangeHandler('prompt', e.target.value, type, field.onChange)
@@ -296,23 +422,148 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
               )}
             />
             {type === 'recolor' && (
+=======
+                >
+                  <SelectTrigger className="select-field">
+                    <SelectValue placeholder="Select size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(aspectRatioOptions).map((key) => (
+                      <SelectItem
+                        key={key}
+                        value={key}
+                        className="select-item"
+                      >
+                        {aspectRatioOptions[key as AspectRatioKey].label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          )}
+
+          {type === "imageconverter" && (
+            <>
+              <input type="hidden" {...form.register("format")} value="png" />
+              <div className="mb-2 text-sm text-gray-500">
+                <span>Supported formats: </span>
+                <span className="inline-flex gap-2">
+                  <span className="px-2 py-0.5 bg-gray-200 rounded">WebP</span>
+                  <span className="px-2 py-0.5 bg-gray-200 rounded">GIF</span>
+                  <span className="px-2 py-0.5 bg-gray-200 rounded">TIFF</span>
+                  <span className="px-2 py-0.5 bg-gray-200 rounded">JPEG</span>
+                  <span className="px-2 py-0.5 bg-gray-200 rounded">JPG</span>
+                </span>
+                <span className="ml-2 text-xs text-gray-400">
+                  (Output will be PNG)
+                </span>
+              </div>
+            </>
+          )}
+
+          {(type === "remove" || type === "recolor") && (
+            <div className="prompt-field">
+>>>>>>> a6a7fc3 (commit)
               <CustomField
                 control={form.control}
-                name="color"
-                formLabel="Replacement Color"
+                name="prompt"
+                formLabel={
+                  type === "remove" ? "Object to remove" : "Object to recolor"
+                }
                 className="w-full"
                 render={({ field }) => (
                   <Input
                     value={field.value}
                     className="input-field"
                     onChange={(e) =>
+<<<<<<< HEAD
                       onInputChangeHandler('color', e.target.value, 'recolor', field.onChange)
+=======
+                      onInputChangeHandler(
+                        "prompt",
+                        e.target.value,
+                        type,
+                        field.onChange
+                      )
+>>>>>>> a6a7fc3 (commit)
                     }
                   />
                 )}
               />
+
+              {type === "recolor" && (
+                <CustomField
+                  control={form.control}
+                  name="color"
+                  formLabel="Replacement Color"
+                  className="w-full"
+                  render={({ field }) => (
+                    <Input
+                      value={field.value}
+                      className="input-field"
+                      onChange={(e) =>
+                        onInputChangeHandler(
+                          "color",
+                          e.target.value,
+                          "recolor",
+                          field.onChange
+                        )
+                      }
+                    />
+                  )}
+                />
+              )}
+            </div>
+          )}
+
+          <div className="media-uploader-field">
+            <CustomField
+              control={form.control}
+              name="publicId"
+              className="flex size-full flex-col"
+              render={({ field }) => (
+                <MediaUploader
+                  onValueChange={field.onChange}
+                  setImage={(img) => setImage(img)}
+                  publicId={field.value}
+                  image={image}
+                  type={type}
+                />
+              )}
+            />
+
+            <TransformedImage
+              image={image}
+              type={type}
+              title={form.getValues().title}
+              isTransforming={isTransforming}
+              setIsTransforming={setIsTransforming}
+              transformationConfig={transformationConfig}
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 Action-Buttons">
+            <Button
+              type="button"
+              className="submit-button capitalize w-12"
+              disabled={isTransforming || newTransformation === null}
+              onClick={onTransformHandler}
+            >
+              {isTransforming ? "Transforming..." : "Apply Transformation"}
+            </Button>
+
+            {!isTransforming && transformationConfig && (
+              <Button
+                type="submit"
+                className="submit-button capitalize"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Share With Community"}
+              </Button>
             )}
           </div>
+<<<<<<< HEAD
         )}
 
         <div className="media-uploader-field">
@@ -362,6 +613,11 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
         </div>
       </form>
     </Form>
+=======
+        </form>
+      </Form>
+    </>
+>>>>>>> a6a7fc3 (commit)
   )
 }
 

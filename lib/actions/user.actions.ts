@@ -6,6 +6,10 @@ import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
 
+// NOTE:
+// Reward logic based on image transformationType should be handled in image.actions.ts, inside addImage().
+
+
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
@@ -45,7 +49,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     });
 
     if (!updatedUser) throw new Error("User update failed");
-    
+
     return JSON.parse(JSON.stringify(updatedUser));
   } catch (error) {
     handleError(error);
@@ -81,11 +85,11 @@ export async function updateCredits(userId: string, creditFee: number) {
 
     const updatedUserCredits = await User.findOneAndUpdate(
       { _id: userId },
-      { $inc: { creditBalance: creditFee }},
+      { $inc: { creditBalance: creditFee } },
       { new: true }
-    )
+    );
 
-    if(!updatedUserCredits) throw new Error("User credits update failed");
+    if (!updatedUserCredits) throw new Error("User credits update failed");
 
     return JSON.parse(JSON.stringify(updatedUserCredits));
   } catch (error) {
