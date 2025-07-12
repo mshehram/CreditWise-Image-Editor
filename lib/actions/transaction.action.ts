@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import Stripe from "stripe";
 import { handleError } from '../utils';
 import { connectToDatabase } from '../database/mongoose';
-import Transaction from '../database/models/transaction.model';
+import Transaction from '../database/transaction.model';
 import { updateCredits } from './user.actions';
 
 export async function checkoutCredits(transaction: CheckoutTransactionParams) {
