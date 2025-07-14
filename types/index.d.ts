@@ -94,8 +94,7 @@ declare type CreateUserParams = {
     | "remove"
     | "recolor"
     | "removeBackground"
-    | "imageconverter"
-    | "transformingdimensions";
+    | "imageconverter";
   
   // ====== URL QUERY PARAMS
   declare type FormUrlQueryParams = {
