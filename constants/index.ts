@@ -34,11 +34,7 @@ export const navLinks = [
     route: "/transformations/add/imageconverter",
     icon: "/assets/icons/stars.svg",
   },
-  {
-    label: "Transforming Dimensions ",
-    route: "/transformations/add/transformingdimensions",
-    icon: "/assets/icons/stars.svg",
-  },
+ 
   
   {
     label: "Profile",
@@ -177,13 +173,7 @@ export const transformationTypes = {
     config: { fillBackground: true },
     icon: "stars.svg",
   },
-   transformingdimensions: {
-    type: "transformingdimensions",
-    title: "Transforming Dimensions",
-    subTitle: "Give Depth to Your Designs",
-    config: { fillBackground: true },
-    icon: "stars.svg",
-  },
+   
 };
 
 export const aspectRatioOptions = {
