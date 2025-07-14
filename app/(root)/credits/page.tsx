@@ -58,7 +58,7 @@ const Credits = async () => {
 
               {plan.name === "Free" ? (
                 <Button variant="outline" className="credits-btn">
-                  Free Consumable
+                Buy Credit
                 </Button>
               ) : (
                 <SignedIn>
