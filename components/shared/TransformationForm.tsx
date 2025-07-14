@@ -73,7 +73,6 @@ const TransformationForm = ({
   creditBalance,
   config = null,
 }: TransformationFormProps) => {
-  const transformationType = transformationTypes[type]
   const [image, setImage] = useState(data)
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -187,83 +186,17 @@ const TransformationForm = ({
     setIsSubmitting(false)
   }
 
-  const onSelectFieldHandler = (
-    value: string,
-    onChangeField: (value: string) => void
-  ) => {
-    const imageSize = aspectRatioOptions[value as AspectRatioKey]
-    if (imageSize) {
-      setImage((prevState: any) => ({
-        ...prevState,
-        aspectRatio: imageSize.aspectRatio,
-        width: imageSize.width,
-        height: imageSize.height,
-      }))
-    }
+  // ...existing code...
 
-    setNewTransformation(transformationType.config)
-    return onChangeField(value)
-  }
+  // ...existing code...
 
-  const onInputChangeHandler = (
-    fieldName: string,
-    value: string,
-    type: string,
-    onChangeField: (value: string) => void
-  ) => {
-    debounce(() => {
-      setNewTransformation((prevState: any) => ({
-        ...prevState,
-        [type]: {
-          ...prevState?.[type],
-          [fieldName === "prompt" ? "prompt" : "to"]: value,
-        },
-      }))
-    }, 1000)()
-    return onChangeField(value)
-  }
+  // ...existing code...
 
-  const handleFormatChange = async (
-    value: string,
-    onChangeField: (value: string) => void
-  ) => {
-    if (type === "imageconverter") {
-      setNewTransformation(transformationType.config)
-    }
+  // ...existing code...
 
-    onSelectFieldHandler("png", onChangeField)
-    setConvertedUrl("")
-  }
+  // ...existing code...
 
-  const onTransformHandler = async () => {
-    setIsTransforming(true)
-
-    setTransformationConfig(
-      deepMergeObjects(newTransformation, transformationConfig)
-    )
-
-    setNewTransformation(null)
-
-    startTransition(async () => {
-      if (type !== "restore" && type !== "imageconverter") {
-        await updateCredits(userId, creditFee)
-        toast.success("Image uploaded successfully\n1 credit was deducted from your account")
-      }
-    })
-  }
-
-  useEffect(() => {
-    if (image && (type === "restore" || type === "removeBackground")) {
-      setNewTransformation(transformationType.config)
-    }
-  }, [image, transformationType.config, type])
-
-  useEffect(() => {
-    if (type === "imageconverter") {
-      form.setValue("format", "png")
-      setNewTransformation(transformationType.config)
-    }
-  }, [image, type, transformationType.config, form])
+  // ...existing code...
 
   return (
     <>
@@ -293,9 +226,7 @@ const TransformationForm = ({
               className="w-full"
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) =>
-                    onSelectFieldHandler(value, field.onChange)
-                  }
+                  onValueChange={field.onChange}
                   value={field.value}
                 >
                   <SelectTrigger className="select-field">
@@ -349,14 +280,7 @@ const TransformationForm = ({
                   <Input
                     value={field.value}
                     className="input-field"
-                    onChange={(e) =>
-                      onInputChangeHandler(
-                        "prompt",
-                        e.target.value,
-                        type,
-                        field.onChange
-                      )
-                    }
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -371,14 +295,7 @@ const TransformationForm = ({
                     <Input
                       value={field.value}
                       className="input-field"
-                      onChange={(e) =>
-                        onInputChangeHandler(
-                          "color",
-                          e.target.value,
-                          "recolor",
-                          field.onChange
-                        )
-                      }
+                      onChange={field.onChange}
                     />
                   )}
                 />
@@ -414,23 +331,12 @@ const TransformationForm = ({
 
           <div className="flex flex-col gap-4 Action-Buttons">
             <Button
-              type="button"
-              className="submit-button capitalize w-12"
-              disabled={isTransforming || newTransformation === null}
-              onClick={onTransformHandler}
+              type="submit"
+              className="submit-button capitalize"
+              disabled={isSubmitting}
             >
-              {isTransforming ? "Transforming..." : "Apply Transformation"}
+              {isSubmitting ? "Submitting..." : "Share With Community"}
             </Button>
-
-            {!isTransforming && transformationConfig && (
-              <Button
-                type="submit"
-                className="submit-button capitalize"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Submitting..." : "Share With Community"}
-              </Button>
-            )}
           </div>
         </form>
       </Form>
