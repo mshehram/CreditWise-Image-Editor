@@ -73,7 +73,7 @@ const TransformationForm = ({
   creditBalance,
   config = null,
 }: TransformationFormProps) => {
-  // Removed transformationType assignment as it is not needed
+  const transformationType = transformationTypes[type]
   const [image, setImage] = useState(data)
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -200,7 +200,8 @@ const TransformationForm = ({
         height: imageSize.height,
       }))
     }
-    // Removed setNewTransformation(transformationType.config)
+
+    setNewTransformation(transformationType.config)
     return onChangeField(value)
   }
 
@@ -226,7 +227,10 @@ const TransformationForm = ({
     value: string,
     onChangeField: (value: string) => void
   ) => {
-    // Removed setNewTransformation(transformationType.config)
+    if (type === "imageconverter") {
+      setNewTransformation(transformationType.config)
+    }
+
     onSelectFieldHandler("png", onChangeField)
     setConvertedUrl("")
   }
@@ -249,18 +253,17 @@ const TransformationForm = ({
   }
 
   useEffect(() => {
-    // No longer using transformationType.config
     if (image && (type === "restore" || type === "removeBackground")) {
-      // setNewTransformation logic removed
+      setNewTransformation(transformationType.config)
     }
-  }, [image, type])
+  }, [image, transformationType.config, type])
 
   useEffect(() => {
     if (type === "imageconverter") {
       form.setValue("format", "png")
-      // setNewTransformation logic removed
+      setNewTransformation(transformationType.config)
     }
-  }, [image, type, form])
+  }, [image, type, transformationType.config, form])
 
   return (
     <>
